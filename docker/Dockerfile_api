@@ -1,0 +1,20 @@
+FROM ruby:2.3.1
+
+MAINTAINER MJ Berends <mjr.berends@gmail.com>
+
+LABEL org.approximatelylinear.project=trans_passports
+LABEL com.approximatelylinear.projectRole=api
+
+RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
+
+# Create user for this app
+RUN groupadd -r trans_passports && \
+	useradd -r -g trans_passports trans_passports
+
+RUN mkdir /opt/trans_passports
+COPY /code/trans-passports-api /opt/trans_passports
+
+WORKDIR /opt/trans_passports
+RUN bundle install
+
+RUN rake db:create db:migrate db:seed
