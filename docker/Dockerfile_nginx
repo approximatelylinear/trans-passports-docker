@@ -1,0 +1,42 @@
+FROM nginx:latest
+MAINTAINER MJ Berends <mjr.berends@gmail.com>
+
+LABEL com.jellyvision.project=trans_passports
+LABEL com.jellyvision.projectRole=nginx
+
+# Install python dev headers
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		python-dev \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Set up virtualenv with supervisor
+RUN mkdir -p /opt/trans_passports
+COPY configuration/get-pip.py /opt/trans_passports/get-pip.py
+RUN python /opt/trans_passports/get-pip.py \
+	&& pip install virtualenv \
+	&& virtualenv /opt/venv
+COPY configuration/requirements_nginx.txt /opt/venv/requirements.txt
+COPY configuration/pypirc /.pypirc
+RUN /opt/venv/bin/pip install -r /opt/venv/requirements.txt
+
+# Add project specific files
+COPY configuration/supervisor/supervisord_nginx.conf /etc/supervisord.conf
+COPY configuration/nginx.conf /etc/nginx/nginx.conf
+
+# Copy over app specific scripts & make executable
+RUN mkdir /opt/bin
+COPY bin/startup_trans_passports_nginx.sh /opt/bin
+RUN chown nginx /opt/bin/startup_trans_passports_nginx.sh && \
+	chmod +x /opt/bin/startup_trans_passports_nginx.sh
+
+RUN mkdir /logs && chown :nginx /logs && chmod g+rws /logs
+
+# Restart nginx [load the config]
+RUN service nginx stop
+
+# Start supervisor
+CMD /opt/bin/startup_trans_passports_nginx.sh
+
+EXPOSE 80
+
+# USER nginx

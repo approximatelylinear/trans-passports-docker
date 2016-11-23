@@ -1,0 +1,7 @@
+deployment_destination: vpc
+deployment_type: single
+key_name:
+instance_type: lambda
+classic_security_group_names: ['','']
+vpc_security_group_ids: []
+vpc_subnet_id:

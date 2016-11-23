@@ -1,0 +1,6 @@
+deployment_destination: vpc
+deployment_type: multi
+key_name:
+instance_type: m3.medium
+classic_security_group_names: ['','']
+vpc_security_group_ids: []

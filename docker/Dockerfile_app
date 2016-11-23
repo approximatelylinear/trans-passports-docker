@@ -1,0 +1,58 @@
+FROM python:2.7
+MAINTAINER MJ Berends <mjr.berends@gmail.com>
+
+LABEL com.jellyvision.project=trans_passports
+LABEL com.jellyvision.projectRole=app
+
+ENV PYTHONUNBUFFERED 1
+
+# Install python dev headers and postgres client
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		python-dev \
+		postgresql-client \
+	&& rm -rf /var/lib/apt/lists/*
+
+
+# Create user for this app
+RUN groupadd -r trans_passports && \
+	useradd -r -g trans_passports trans_passports
+
+# Create a virtual environment and install requirements
+RUN virtualenv /opt/venv
+COPY configuration/requirements.txt /opt/venv/requirements.txt
+COPY configuration/pypirc /.pypirc
+RUN /opt/venv/bin/pip install -r /opt/venv/requirements.txt
+
+# Add project specific files
+COPY configuration/supervisor/supervisord_app.conf /etc/supervisord.conf
+COPY configuration/supervisor/supervisord_local.conf /etc/supervisord_local.conf
+RUN mkdir /opt/trans_passports
+COPY / /opt/trans_passports
+RUN chown -R :trans_passports /opt/trans_passports \
+	&& chmod -R u+rw,g+rw /opt/trans_passports
+RUN ls -lhat /opt/trans_passports
+
+# Add Testing Configuration
+COPY configuration/coveragerc.txt /opt/.coveragerc
+
+# Copy over app specific scripts & make executable
+RUN mkdir /opt/bin
+COPY bin/* /opt/bin
+RUN chown :trans_passports /opt/bin/* \
+	&& chmod g+r,g+x /opt/bin/*
+
+# Setup main python package
+RUN chdir /opt/trans_passports/code/trans_passports && \
+	/opt/venv/bin/python setup.py develop && \
+	/opt/venv/bin/python /opt/trans_passports/bin/create_flask_admin.py
+
+# Ref ports to open
+EXPOSE 5000
+
+
+# Set default command
+
+CMD /opt/startup_trans_passports_app.sh
+
+
+# USER trans_passports

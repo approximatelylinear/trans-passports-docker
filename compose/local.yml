@@ -1,0 +1,42 @@
+version: '2'
+services:
+  trans_passports_main:
+    container_name: trans_passports_main
+    volumes:
+      - ../:/opt/trans_passports:Z # Label the volume as private and unshared
+    volumes_from:
+      - logs
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile_app
+    command: /opt/startup_trans_passports_app_local.sh
+    ports:
+      - "5000:5000"
+    environment:
+      TZ: UTC
+      ENV: local
+      ENVIRONMENT_SETTING: development
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 20000
+        hard: 40000
+  nginx:
+    container_name: nginx
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile_nginx
+    ports:
+      - "80:80"
+    volumes_from:
+      - logs
+      - trans_passports_main
+    links:
+      - trans_passports_main:app
+
+  logs:
+    container_name: logs
+    image: python:2.7
+    volumes:
+      - '/logs'
+    command: '/bin/true'

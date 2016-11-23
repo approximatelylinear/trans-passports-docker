@@ -1,0 +1,6 @@
+[submodule "code/trans-passports-api"]
+	path = code/trans-passports-api
+	url = https://github.com/arieldiamond/trans-passports-api
+[submodule "code/trans-passports-react"]
+	path = code/trans-passports-react
+	url = https://github.com/arieldiamond/trans-passports-react

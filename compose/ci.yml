@@ -1,0 +1,37 @@
+version: '2'
+services:
+  trans_passports_main:
+    container_name: trans_passports_main
+    build: ../
+    dockerfile: docker/Dockerfile_app
+    ports:
+      - "5000:5000"
+    volumes_from:
+      - logs
+    environment:
+      ENVIRONMENT_SETTING: ci
+
+  nginx:
+    container_name: nginx
+    build: ../
+    dockerfile: docker/Dockerfile_nginx
+    ports:
+      - "80:80"
+    volumes_from:
+      - logs
+    links:
+      - trans_passports_main:app
+
+  sumo:
+    container_name: sumo
+    build: ../
+    dockerfile: docker/Dockerfile_sumo
+    volumes_from:
+      - logs
+
+  logs:
+    container_name: logs
+    image: python:2.7
+    volumes:
+      - '/logs'
+    command: '/bin/true'
