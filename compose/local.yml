@@ -27,44 +27,46 @@ services:
     build:
       context: ../
       dockerfile: docker/Dockerfile_api
-    command: rails s
+    command: /opt/bin/run_api.sh
     ports:
       - "3000:3000"
     env_file:
       - ../api.env
     depends_on:
+      # - trans_passports_db_data
       - trans_passports_db
+      # - trans_passports_redis_data
       - trans_passports_redis
 
   trans_passports_redis:
-    container_name: redis
+    container_name: trans_passports_redis
     image: redis
     env_file:
       - ../redis.env
-    volumes_from:
-      - trans_passports_redis_data
+    # volumes_from:
+    #   - trans_passports_redis_data
 
-  trans_passports_redis_data:
-    container_name: redis_data
-    image: redis
-    volumes:
-      - '/data'
-    command: '/bin/true'
+  # trans_passports_redis_data:
+  #   container_name: trans_passports_redis_data
+  #   image: redis
+  #   volumes:
+  #     - '/data'
+  #   command: '/bin/true'
 
   trans_passports_db:
-    container_name: db
+    container_name: trans_passports_db
     image: postgres
     env_file:
       - ../postgres.env
-    volumes_from:
-      - trans_passports_db_data
+    # volumes_from:
+    #   - trans_passports_db_data
 
-  trans_passports_db_data:
-    container_name: db_data
-    image: postgres
-    volumes:
-      - '/data'
-    command: '/bin/true'
+  # trans_passports_db_data:
+  #   container_name: trans_passports_db_data
+  #   image: postgres
+  #   volumes:
+  #     - '/data'
+  #   command: '/bin/true'
 
   # nginx:
   #   container_name: nginx
