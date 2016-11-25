@@ -18,22 +18,28 @@ This project structures a python-based app.
 
 ## Docker
 
-This project consists of the following docker container:
+This project consists of the following docker containers:
 
-* app - flask fronted by gunicorn, managed by supervisor
-* nginx - managed by supervisor
-* sumo - log aggregation client - customized per app
-* logs - a data volume for other containers to write their logs to
+* trans_passports_api - Rails API
+* trans_passports_frontend - React-driven frontend (_in progress_)
+* trans_passports_db - Postgres database
+* trans_passports_redis - Redis cache
+* nginx - NGINX server managed by supervisor (_in progress_)
+* sumo - log aggregation client - customized per app (_in progress_)
 
 ## Building
 
-For local building and testing run the following command:
+For local building and testing, run the following command:
 
-`docker-compose -f compose/local.yml build`
+`make local_build`
 
 ## Running Containers
 
-This will build the images (forceably, even if the daemon doesn't think there have been updates) and will start containers.
+For local running, try the following:
+
+`make local_up`
+
+If you're having trouble getting changes to be recognized, the following will build the images (forceably, even if the daemon doesn't think there have been updates) and will start containers.
 
 `docker-compose -f compose/local.yml -p trans_passports up --force-recreate -d`
 
