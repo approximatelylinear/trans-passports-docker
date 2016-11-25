@@ -12,9 +12,21 @@ RUN groupadd -r trans_passports && \
 	useradd -r -g trans_passports trans_passports
 
 RUN mkdir /opt/trans_passports
-COPY /code/trans-passports-api /opt/trans_passports
+
+# Bundle install first before copying over all the code
+COPY /code/trans-passports-api/Gemfile /opt/trans_passports/Gemfile
+COPY /code/trans-passports-api/Gemfile.lock /opt/trans_passports/Gemfile.lock
 
 WORKDIR /opt/trans_passports
 RUN bundle install
 
-RUN rake db:create db:migrate db:seed
+RUN mkdir /opt/bin
+COPY bin/run_api.sh /opt/bin
+RUN chown :trans_passports /opt/bin/* \
+	&& chmod g+r,g+x /opt/bin/*
+
+COPY /code/trans-passports-api /opt/trans_passports
+
+CMD [ "/opt/bin/run_api.sh" ]
+
+USER trans_passports
