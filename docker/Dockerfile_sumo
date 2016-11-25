@@ -1,8 +1,8 @@
 FROM sumologic/collector:latest
 MAINTAINER MJ Berends <mjr.berends@gmail.com>
 
-LABEL com.jellyvision.project=trans_passports
-LABEL com.jellyvision.projectRole=sumo
+LABEL org.approximatelylinear.project=trans_passports
+LABEL com.approximatelylinear.projectRole=sumo
 
 COPY configuration/sumo_qa.json /etc/sumo-sources-qa.json
 COPY configuration/sumo_production.json /etc/sumo-sources-production.json
