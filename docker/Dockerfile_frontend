@@ -1,0 +1,25 @@
+FROM node:0.0.0
+
+MAINTAINER MJ Berends <mjr.berends@gmail.com>
+
+LABEL org.approximatelylinear.project=trans_passports
+LABEL com.approximatelylinear.projectRole=frontend
+
+
+# Create user for this app
+RUN groupadd -r trans_passports && \
+	useradd -r -g trans_passports trans_passports
+
+
+RUN mkdir -p /opt/trans_passports
+WORKDIR /opt/trans_passports
+
+#ARG NODE_ENV
+#ENV NODE_ENV $NODE_ENV
+
+COPY /code/trans-passports-react /opt/trans_passports
+RUN npm install
+
+CMD [ "/opt/bin/run_frontend.sh" ]
+
+USER trans_passports
