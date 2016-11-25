@@ -14,8 +14,8 @@ RUN groupadd -r trans_passports && \
 RUN mkdir -p /opt/trans_passports
 WORKDIR /opt/trans_passports
 
-#ARG NODE_ENV
-#ENV NODE_ENV $NODE_ENV
+ARG NODE_ENV
+ENV NODE_ENV $NODE_ENV
 
 COPY /code/trans-passports-react /opt/trans_passports
 RUN npm install
