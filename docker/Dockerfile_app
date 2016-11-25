@@ -1,8 +1,8 @@
 FROM python:2.7
 MAINTAINER MJ Berends <mjr.berends@gmail.com>
 
-LABEL com.jellyvision.project=trans_passports
-LABEL com.jellyvision.projectRole=app
+LABEL org.approximatelylinear.project=trans_passports
+LABEL com.approximatelylinear.projectRole=app
 
 ENV PYTHONUNBUFFERED 1
 
