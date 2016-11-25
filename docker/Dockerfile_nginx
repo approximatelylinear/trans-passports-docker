@@ -1,8 +1,8 @@
 FROM nginx:latest
 MAINTAINER MJ Berends <mjr.berends@gmail.com>
 
-LABEL com.jellyvision.project=trans_passports
-LABEL com.jellyvision.projectRole=nginx
+LABEL org.approximatelylinear.project=trans_passports
+LABEL com.approximatelylinear.projectRole=nginx
 
 # Install python dev headers
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -39,4 +39,4 @@ CMD /opt/bin/startup_trans_passports_nginx.sh
 
 EXPOSE 80
 
-# USER nginx
+USER nginx
