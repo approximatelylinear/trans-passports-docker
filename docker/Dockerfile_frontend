@@ -1,24 +1,31 @@
-FROM node:0.0.0
+FROM node:7.2.0
 
 MAINTAINER MJ Berends <mjr.berends@gmail.com>
 
 LABEL org.approximatelylinear.project=trans_passports
 LABEL com.approximatelylinear.projectRole=frontend
 
+ENV NODE_ENV $NODE_ENV
 
 # Create user for this app
 RUN groupadd -r trans_passports && \
 	useradd -r -g trans_passports trans_passports
 
-
 RUN mkdir -p /opt/trans_passports
 WORKDIR /opt/trans_passports
 
-ARG NODE_ENV
-ENV NODE_ENV $NODE_ENV
-
-COPY /code/trans-passports-react /opt/trans_passports
+# Install node deps
+COPY /code/trans-passports-react/package.json /opt/trans_passports/package.json
+COPY /code/trans-passports-react/webpack.config.js /opt/trans_passports/webpack.config.js
 RUN npm install
+
+RUN mkdir /opt/bin
+COPY bin/run_frontend.sh /opt/bin
+RUN chown :trans_passports /opt/bin/* \
+	&& chmod g+r,g+x /opt/bin/*
+
+# Copy over the rest of the codebase
+COPY /code/trans-passports-react /opt/trans_passports
 
 CMD [ "/opt/bin/run_frontend.sh" ]
 
