@@ -5,6 +5,9 @@ MAINTAINER MJ Berends <mjr.berends@gmail.com>
 LABEL org.approximatelylinear.project=trans_passports
 LABEL com.approximatelylinear.projectRole=frontend
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	&& rm -rf /var/lib/apt/lists/*
+
 ENV NODE_ENV $NODE_ENV
 
 # Create user for this app
