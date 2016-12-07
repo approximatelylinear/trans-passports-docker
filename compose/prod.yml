@@ -1,0 +1,37 @@
+version: '2'
+services:
+  trans_passports_frontend:
+    volumes:
+      - ../code/trans-passports-react:/opt/trans_passports:Z # Label the volume as private and unshared
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile_frontend
+    command: /opt/bin/run_frontend.sh
+    ports:
+      - "8080:8080"
+    env_file:
+      - ../frontend.env
+    depends_on:
+      - trans_passports_redis
+      - trans_passports_api
+
+  trans_passports_api:
+    volumes:
+      - ../code/trans-passports-api:/opt/trans_passports:Z # Label the volume as private and unshared
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile_api
+    command: /opt/bin/run_api.sh
+    ports:
+      - "3000:3000"
+    env_file:
+      - ../api.env
+    depends_on:
+      - trans_passports_redis
+
+  trans_passports_redis:
+    container_name: trans_passports_redis
+    image: redis
+    env_file:
+      - ../redis.env
+
