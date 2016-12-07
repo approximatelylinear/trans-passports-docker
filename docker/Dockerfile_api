@@ -5,7 +5,12 @@ MAINTAINER MJ Berends <mjr.berends@gmail.com>
 LABEL org.approximatelylinear.project=trans_passports
 LABEL com.approximatelylinear.projectRole=api
 
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
+RUN apt-get update -qq && apt-get install -y --no-install-recommends \
+	build-essential \
+	libpq-dev \
+	nodejs \
+	postgresql-client \
+	&& rm -rf /var/lib/apt/lists/*
 
 # Create user for this app
 RUN groupadd -r trans_passports && \
