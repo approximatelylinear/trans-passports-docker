@@ -15,12 +15,15 @@ RUN groupadd -r trans_passports && \
 	useradd -r -g trans_passports trans_passports
 
 RUN mkdir -p /opt/trans_passports
+RUN mkdir -p /opt/src
 WORKDIR /opt/trans_passports
 
 # Install node deps
 COPY /code/trans-passports-react/package.json /opt/trans_passports/package.json
 COPY /code/trans-passports-react/webpack.config.js /opt/trans_passports/webpack.config.js
 RUN npm install
+#	Move it over to a tmp location so that we can move it back upon volume linking
+RUN cp -r /opt/trans_passports/* /opt/src
 
 RUN mkdir /opt/bin
 COPY bin/run_frontend.sh /opt/bin
@@ -29,6 +32,9 @@ RUN chown :trans_passports /opt/bin/* \
 
 # Copy over the rest of the codebase
 COPY /code/trans-passports-react /opt/trans_passports
+
+RUN chown -R :trans_passports /opt/trans_passports \
+	&& chmod -R g+r,g+w,g+x /opt/trans_passports
 
 CMD [ "/opt/bin/run_frontend.sh" ]
 
