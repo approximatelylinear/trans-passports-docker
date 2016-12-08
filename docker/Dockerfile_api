@@ -16,7 +16,8 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
 RUN groupadd -r trans_passports && \
 	useradd -r -g trans_passports trans_passports
 
-RUN mkdir /opt/trans_passports
+RUN mkdir -p /opt/trans_passports
+RUN mkdir -p /opt/src
 
 # Bundle install first before copying over all the code
 COPY /code/trans-passports-api/Gemfile /opt/trans_passports/Gemfile
@@ -25,11 +26,15 @@ COPY /code/trans-passports-api/Gemfile.lock /opt/trans_passports/Gemfile.lock
 WORKDIR /opt/trans_passports
 RUN bundle install
 
+#	Move any Gem installation artifacts to preserve them upon volume linking
+RUN cp -r /opt/trans_passports/* /opt/src
+
 RUN mkdir /opt/bin
 COPY bin/run_api.sh /opt/bin
 RUN chown :trans_passports /opt/bin/* \
 	&& chmod g+r,g+x /opt/bin/*
 
+RUN mkdir -p /opt/trans_passports
 COPY /code/trans-passports-api /opt/trans_passports
 
 CMD [ "/opt/bin/run_api.sh" ]
